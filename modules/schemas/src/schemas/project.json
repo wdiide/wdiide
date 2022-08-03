@@ -1,0 +1,22 @@
+{
+  "name": "wdiEstoque",
+  "apiType": "node",
+  "repoType": "h2",
+  "frontType": "bootstrap",
+  "repoSrc": {
+    "user": "user",
+    "password": "*****",
+    "url": "localhost",
+    "port": "",
+    "extra": {}
+  },
+  "accessControl": {
+    "origin": "local",
+    "replace": [
+      {
+        "from":"ac_department",
+        "to":"ac_equipe"
+      }
+    ]
+  }
+}

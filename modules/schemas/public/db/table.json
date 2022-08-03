@@ -1,0 +1,144 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "pk": {
+      "type": "object",
+      "properties": {
+        "fields": {
+          "type": "array",
+          "items": {
+            "required": [],
+            "properties": {}
+          }
+        }
+      },
+      "required": [
+        "fields"
+      ]
+    },
+    "checks": {
+      "type": "array",
+      "uniqueItems": true,
+      "minItems": 1,
+      "items": {
+        "required": [
+          "name",
+          "condition"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "condition": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "required": [],
+        "properties": {}
+      }
+    },
+    "fks": {
+      "type": "array",
+      "uniqueItems": true,
+      "minItems": 1,
+      "items": {
+        "required": [
+          "pk_model",
+          "name"
+        ],
+        "properties": {
+          "fields": {
+            "type": "array",
+            "items": {
+              "required": [],
+              "properties": {}
+            }
+          },
+          "pk_model": {
+            "type": "string",
+            "minLength": 1
+          },
+          "pk_fields": {
+            "type": "array",
+            "items": {
+              "required": [],
+              "properties": {}
+            }
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "fields": {
+      "type": "array",
+      "uniqueItems": true,
+      "minItems": 1,
+      "items": {
+        "required": [
+          "name",
+          "type",
+          "size",
+          "digits",
+          "defaultValue",
+          "position",
+          "isNullable",
+          "isAutoincrement",
+          "isKey"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "type": {
+            "type": "string",
+            "minLength": 1
+          },
+          "size": {
+            "type": "number"
+          },
+          "digits": {
+            "type": "number"
+          },
+          "defaultValue": {
+            "type": "string",
+            "minLength": 1
+          },
+          "position": {
+            "type": "number"
+          },
+          "isNullable": {
+            "type": "boolean"
+          },
+          "isAutoincrement": {
+            "type": "boolean"
+          },
+          "isKey": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "pk",
+    "checks",
+    "rules",
+    "fks",
+    "fields"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "name": "default",
+  "icon": {"fileName": "menu.png", "classes": "menu" },
+  "rules": ["ALL", "CREATE", "READ", "UPDATE", "DELETE"],
+  "menus": [
+    {
+      "name": "home",
+      "label": "Home",
+      "link": "/",
+      "submenus":[{}],
+      "rules": ["READ"]
+    }
+  ]
+}

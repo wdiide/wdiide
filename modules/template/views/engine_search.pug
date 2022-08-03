@@ -1,0 +1,32 @@
+extends engine_common
+
+block content
+  header
+    a.logo(href=`${appContext}${engine}`)= engineTitle
+    form(action=`${appContext}${engine}/search` method='GET')
+      input.search-input(autofocus='' value=`${searchQuery || ''}` placeholder=`${place_holder}` type='search' name='q')
+    a.button.github-button(href='https://github.com/finallyayo/hacker-news') Source code
+
+  .container
+    if !searchResults || !searchResults.meta.size
+      .result-count
+          p No results found for your query:
+          |
+          strong #{searchQuery}
+    else
+      ul.search-results
+        each result in searchResults.data
+          li.news-article
+            a.title-link(target='_blank' rel='noreferrer noopener' href=`${result.url}`)
+              h3.title #{result.title}
+            .metadata #{result.points} points by
+              |
+              |
+              span.author #{result.author}
+              |
+              | on
+              |
+              time.created-date #{dateFns.format(new Date(`${result.created_at}`), 'LLL dd, yyyy')}
+              |
+              |
+              a.comments(target='_blank' rel='noreferrer noopener' href=`https://news.ycombinator.com/item?id=${result.objectID}`) #{result.num_comments} comments

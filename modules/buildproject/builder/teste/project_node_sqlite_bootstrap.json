@@ -1,0 +1,118 @@
+{
+  "name": "wdiEstoque",
+  "apiType": "node",
+  "repoType": "sqlite",
+  "frontType": "bootstrap",
+  "repoSrc": {
+    "file": "${workspace}/db/wdidb.sqlite",
+    "user": "user",
+    "password": "*****",
+    "url": "localhost",
+    "port": "",
+    "extra": {}
+  },
+  "accessControl": {
+    "origin": "local",
+    "replace": [
+      {
+        "from": "ac_department",
+        "to": "ac_equipe"
+      }
+    ]
+  },
+  "modelsInsertInit": [
+    {
+      "name": "produto_grp",
+      "ids":["id"],
+      "values": [
+        { "id": 1, "descricao": "Camiseta NIKE" },
+        { "id": 2, "descricao": "Camiseta Adidas" }
+      ]
+    },
+    {
+      "name": "produto",
+      "ids":["id"],
+      "values": [
+        { "id": 1, "id_prod_grp": 1, "descricao": "Camiseta NIKE G rosa" },
+        { "id": 2, "id_prod_grp": 1, "descricao": "Camiseta NIKE P branca" },
+        { "id": 3, "id_prod_grp": 1, "descricao": "Camiseta NIKE M cinsa" },
+        { "id": 4, "id_prod_grp": 2, "descricao": "Camiseta Adidas G rosa" },
+        { "id": 5, "id_prod_grp": 2, "descricao": "Camiseta Adidas p azul" }
+      ]
+    }
+  ],
+  "models": [
+    {
+      "name": "produto",
+      "pk": {
+        "name": "pk_produto",
+        "fields": ["id"]
+      },
+      "checks": [
+        {
+          "name": "chk_produto_grp",
+          "condition": "id_produto_grp is not null"
+        }
+      ],
+      "fks": [
+        {
+          "name": "fk_produto_grp",
+          "fields": ["id_prod_grp"],
+          "pk_model": "produto_grp",
+          "pk_fields": ["id"]
+        }
+      ],
+      "fields": [
+        {
+          "name": "id",
+          "type": "integer",
+          "size": 10,
+          "digits": 0,
+          "defaultValue": "10",
+          "position": 0,
+          "isNotNull": true,
+          "isAutoincrement": false,
+          "isKey": true
+        },
+        {
+          "name": "descricao",
+          "type": "string",
+          "size": 100,
+          "position": 1
+        },
+        {
+          "name": "id_prod_grp",
+          "type": "integer",
+          "size": 10,
+          "position": 2
+        }
+      ]
+    },
+    {
+      "name": "produto_grp",
+      "pk": {
+        "name": "pk_produto_grp",
+        "fields": ["id"]
+      },
+      "fields": [
+        {
+          "name": "id",
+          "type": "integer",
+          "size": 10,
+          "digits": 0,
+          "defaultValue": "10",
+          "position": 0,
+          "isNotNull": true,
+          "isAutoincrement": false,
+          "isKey": true
+        },
+        {
+          "name": "descricao",
+          "type": "string",
+          "size": 100,
+          "position": 1
+        }
+      ]
+    }
+  ]
+}

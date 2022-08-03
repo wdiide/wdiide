@@ -1,0 +1,7 @@
+extends engine_common
+
+block content
+  .home-search
+    img(src=`${appContext}images/${image}` width="180" height="180")
+    form(action=`${appContext}${engine}/search` method='GET')
+      input.home-input(autofocus='' placeholder=`${place_holder}` type='search' name='q')
