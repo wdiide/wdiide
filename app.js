@@ -20,11 +20,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/app1', require('./modules/app1/app'));
-app.use('/app2', require('./modules/app2/app'));
-app.use('/app3', require('./modules/app3/app'));
+// app.use('/app1', require('./modules/app1/app'));
+// app.use('/app2', require('./modules/app2/app'));
+// app.use('/app3', require('./modules/app3/app'));
 app.use('/schemas', require('./modules/schemas/app'));
-app.use('/social', require('./modules/social/app'));
+// app.use('/social', require('./modules/social/app'));
 app.use('/build', require('./modules/buildproject/app'));
 app.use('/', require('./app.router'));
 
