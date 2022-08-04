@@ -97,10 +97,11 @@ class WdiKnexDb {
     }
 
     async createModel(model, opts = { returnQuery: false }) {
+        let _self = this;
         function fncCreateTable(table) {
 
             model.fields.forEach(function (field) {
-                this.iUtil.fncCentralField(table, field);
+                _self.iUtil.fncCentralField(table, field);
             });
 
             if (model.fks && model.fks.length) {
@@ -109,9 +110,9 @@ class WdiKnexDb {
                 });
             }
         }
-        let resultCreateTable = await this.knexDb.schema.createTableIfNotExists(model.name, fncCreateTable);
+        let resultCreateTable = await _self.knexDb.schema.createTableIfNotExists(model.name, fncCreateTable);
         if (opts.returnQuery) {
-            let resultSql = await this.knexDb.schema.createTableIfNotExists(model.name, fncCreateTable).toSQL();
+            let resultSql = await _self.knexDb.schema.createTableIfNotExists(model.name, fncCreateTable).toSQL();
             return { result: resultCreateTable, sql: resultSql[0].sql }
         }
         return resultCreateTable;
