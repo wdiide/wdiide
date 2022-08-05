@@ -121,6 +121,19 @@ class WdiKnexDb {
         return resultCreateTable;
     }
 
+    async modelNames(){
+        return await this.inspector.tables();
+    }
+
+    async deleteModel(modelName, opts = { returnQuery: false }){
+        let result = await this.knexDb.schema.dropTableIfExists(modelName);
+        if (opts.returnQuery) {
+            let resultSql = await this.knexDb.schema.dropTableIfExists(modelName).toSQL();
+            return { result: result, sql: resultSql[0].sql }
+        }
+        return result;
+    }
+
     async select(modelName) {
         return await this.knexDb.from(modelName)
             // .offset(page.meta.offSet())
@@ -165,7 +178,7 @@ class WdiKnexDb {
         }
         let resultUpdateField = await _self.knexDb.schema.alterTable(param.modelName, fncAlterColumn);
         if (param.returnQuery) {
-            let resultSql = await _self.knexDb.schema.alterTable(param.modelName, fncAlterColumn).toSQL().toNative();
+            let resultSql = await _self.knexDb.schema.alterTable(param.modelName, fncAlterColumn).toSQL();
             return { result: resultUpdateField, sql: resultSql[0].sql, bindings: resultSql[0].bindings };
         }
         return resultUpdateField;
@@ -177,8 +190,8 @@ class WdiKnexDb {
         }
         let resultDelete = await this.knexDb.schema.table(param.modelName, fncDropColumn);
         if (param.returnQuery) {
-            let resultSql = await this.knexDb.schema.table(param.modelName, fncDropColumn).toSQL().toNative();
-            return { result: resultDelete, sql: resultSql.sql, bindings: resultSql.bindings };
+            let resultSql = await this.knexDb.schema.table(param.modelName, fncDropColumn).toSQL();
+            return { result: resultDelete, sql: resultSql[0].sql, bindings: resultSql.bindings };
         }
         return resultDelete;
     }

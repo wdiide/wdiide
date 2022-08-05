@@ -33,7 +33,7 @@ class SQLitRepoBuilder {
                 if (!result) {
                     console.log('model não existe ' + model.name);
                     let modelCreated = await wdiKnexRepo.createModel(model, { returnQuery: true });
-                    allScriptCompiled.push(modelCreated.sql);
+                    modelCreated.sql && allScriptCompiled.push(modelCreated.sql);
                     console.log('model criado ' + model.name);
                 } else {
                     let modelDb = await wdiKnexRepo.modelMeta(model.name);
@@ -44,7 +44,7 @@ class SQLitRepoBuilder {
                         console.log(JSON.stringify(fieldDb));
                         if (!fieldDb) {
                             let fieldCreated = await wdiKnexRepo.addField({ modelName: model.name, field: field, returnQuery: true });
-                            allScriptCompiled.push(fieldCreated.sql);
+                            fieldCreated.sql && allScriptCompiled.push(fieldCreated.sql);
                             console.log('field criado ' + field.name);
                         } else if (field.type != fieldDb.type
                             || (field.size != fieldDb.size && (field.type == fieldDb.type && field.type == 'string'))
@@ -55,10 +55,45 @@ class SQLitRepoBuilder {
                             || field.isKey != fieldDb.isKey
                         ) {
                             let fieldUpdated = wdiKnexRepo.updateField({ modelName: model.name, field: field, returnQuery: true });
-                            allScriptCompiled.push(fieldUpdated.sql);
-                            console.log('field criado ' + field.name);
+                            fieldUpdated.sql && allScriptCompiled.push(fieldUpdated.sql);
+                            console.log('field atualizado ' + field.name);
                         }
                     }
+
+
+                    for (let idxField = 0; idxField < modelDb.fields.length; idxField++) {
+                        const fieldDb = modelDb.fields[idxField];
+                        let fieldMd = model.fields.find(fieldMd => fieldMd.name == fieldDb.name);
+                        console.log(JSON.stringify(fieldMd));
+                        if (!fieldMd) {
+                            let fieldDeleted = await wdiKnexRepo.deleteField({ modelName: model.name, fieldName: fieldDb.name, returnQuery: true });
+                            fieldDeleted.sql && allScriptCompiled.push(fieldDeleted.sql);
+                            console.log('field deletado ' + fieldDb.name);
+                        }
+                    }
+
+
+                }
+            }
+
+
+
+
+
+
+
+
+            let modelNames = await wdiKnexRepo.modelNames();
+            for (let index = 0; modelNames && index < modelNames.length; index++) {
+                const modelName = modelNames[index];
+                // let result = await wdiKnexRepo.hasModel(model.name);
+                // projectSrc.models[index];
+                let result = projectSrc.models.find(model => model.name == modelName);
+                if (!result) {
+                    console.log('model foi deletado no negocio ' + modelName);
+                    let modelDeleted = await wdiKnexRepo.deleteModel(modelName, { returnQuery: true });
+                    modelDeleted.sql && allScriptCompiled.push(modelDeleted.sql);
+                    console.log('model deletado ' + modelName);
                 }
             }
             return allScriptCompiled;
