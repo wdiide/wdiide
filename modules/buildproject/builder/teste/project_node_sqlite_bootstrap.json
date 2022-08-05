@@ -85,6 +85,13 @@
           "type": "integer",
           "size": 10,
           "position": 2
+        },
+        {
+          "name": "valor",
+          "type": "decimal",
+          "size": 10,
+          "digits": 2,
+          "position": 3
         }
       ]
     },

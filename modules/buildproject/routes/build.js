@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 var opts = {
-  workspace:"C:/ambinete/workspaces/wdiide"
+  workspace:"E:/workspace/wdiide"
 }
 
 let buildProjectFnc = function (req, res) {

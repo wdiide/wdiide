@@ -68,7 +68,7 @@ class WdiKnexDb {
             });
         }
 
-        this.iUtil.fncCentralField = (table, field) => {
+        this.iUtil.fncCentralField = (table, field, isAlter=false) => {
             var columnDbRef = undefined;
             console.log('field');
             if (field.type == 'integer') {
@@ -77,6 +77,8 @@ class WdiKnexDb {
                 } else {
                     columnDbRef = table.integer(field.name, field.size);
                 }
+            } else if (field.type == 'decimal') {
+                columnDbRef = table.decimal(field.name, field.size, field.digits);
             } else if (field.type == 'string') {
                 columnDbRef = table.string(field.name, field.size);
             }
@@ -85,6 +87,7 @@ class WdiKnexDb {
             if (field.isNotNull) columnDbRef.notNullable();
             if (field.isAutoincrement) columnDbRef.increments();
             if (field.defaultValue) columnDbRef.defaultTo(field.defaultValue);
+            if(isAlter) columnDbRef.alter();
         }
     }
 
@@ -142,15 +145,30 @@ class WdiKnexDb {
     }
 
     async addField(param = { modelName: '', field: {}, returnQuery: false }) {
+        let _self = this;
         let fncAddColumn = function (table) {
-            this.iUtil.fncCentralField(table, field);
+            _self.iUtil.fncCentralField(table, param.field);
         }
-        let resultDelete = await this.knexDb.schema.table(param.modelName, fncAddColumn);
+        let resultAddField = await _self.knexDb.schema.table(param.modelName, fncAddColumn);
         if (param.returnQuery) {
-            let resultSql = await this.knexDb.schema.table(param.modelName, fncAddColumn).toSQL().toNative();
-            return { result: resultInsert, sql: resultSql.sql, bindings: resultSql.bindings };
+            let resultSql = await _self.knexDb.schema.table(param.modelName, fncAddColumn).toSQL();
+            return { result: resultAddField, sql: resultSql[0].sql, bindings: resultSql[0].bindings };
         }
-        return resultDelete;
+        return resultAddField;
+    }
+
+    async updateField(param = { modelName: '', field: {}, returnQuery: false }) {
+        let _self = this;
+        let fncAlterColumn = function (table) {
+            let isAlter = true;
+            _self.iUtil.fncCentralField(table, param.field, isAlter);
+        }
+        let resultUpdateField = await _self.knexDb.schema.alterTable(param.modelName, fncAlterColumn);
+        if (param.returnQuery) {
+            let resultSql = await _self.knexDb.schema.alterTable(param.modelName, fncAlterColumn).toSQL().toNative();
+            return { result: resultUpdateField, sql: resultSql[0].sql, bindings: resultSql[0].bindings };
+        }
+        return resultUpdateField;
     }
 
     async deleteField(param = { modelName: '', fieldName: '', returnQuery: false }) {
@@ -160,7 +178,7 @@ class WdiKnexDb {
         let resultDelete = await this.knexDb.schema.table(param.modelName, fncDropColumn);
         if (param.returnQuery) {
             let resultSql = await this.knexDb.schema.table(param.modelName, fncDropColumn).toSQL().toNative();
-            return { result: resultInsert, sql: resultSql.sql, bindings: resultSql.bindings };
+            return { result: resultDelete, sql: resultSql.sql, bindings: resultSql.bindings };
         }
         return resultDelete;
     }

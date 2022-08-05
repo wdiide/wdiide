@@ -40,19 +40,23 @@ class SQLitRepoBuilder {
                     console.log('ModelDb');
                     for (let idxField = 0; idxField < model.fields.length; idxField++) {
                         const field = model.fields[idxField];
-                        let fieldDb = modelDb.fields.find(fieldDb=>fieldDb.name==field.name);
+                        let fieldDb = modelDb.fields.find(fieldDb => fieldDb.name == field.name);
                         console.log(JSON.stringify(fieldDb));
-                        if(!fieldDb){
-                            //TODO incluir new field(alter table add column)
-                        }else if(field.type != fieldDb.type 
+                        if (!fieldDb) {
+                            let fieldCreated = await wdiKnexRepo.addField({ modelName: model.name, field: field, returnQuery: true });
+                            allScriptCompiled.push(fieldCreated.sql);
+                            console.log('field criado ' + field.name);
+                        } else if (field.type != fieldDb.type
                             || (field.size != fieldDb.size && (field.type == fieldDb.type && field.type == 'string'))
                             || field.isNullable != fieldDb.isNullable
                             || field.digits != fieldDb.digits
                             || field.defaultValue != fieldDb.defaultValue
                             || field.isAutoincrement != fieldDb.isAutoincrement
                             || field.isKey != fieldDb.isKey
-                        ){
-                            //TODO alterar field
+                        ) {
+                            let fieldUpdated = wdiKnexRepo.updateField({ modelName: model.name, field: field, returnQuery: true });
+                            allScriptCompiled.push(fieldUpdated.sql);
+                            console.log('field criado ' + field.name);
                         }
                     }
                 }
@@ -66,7 +70,7 @@ class SQLitRepoBuilder {
                 for (let index = 0; index < projectSrc.modelsInsertInit.length; index++) {
                     const modelInsertInit = projectSrc.modelsInsertInit[index];
                     let result = await wdiKnexRepo.insertOrUpdate({ modelName: modelInsertInit.name, content: modelInsertInit.values, ids: modelInsertInit.ids, returnQuery: true });
-                    allScriptInsertDefault.push({sql: result.sql, bindings:result.bindings});
+                    allScriptInsertDefault.push({ sql: result.sql, bindings: result.bindings });
                 }
             }
         }
@@ -101,7 +105,7 @@ class SQLitRepoBuilder {
             console.log('FINALIZOU');
             setTimeout(() => {
                 wdiKnexRepo.close();
-            }, 30000);
+            }, 3000);
         })
 
         console.log('Repo criado');
