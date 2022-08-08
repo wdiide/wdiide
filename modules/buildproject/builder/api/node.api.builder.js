@@ -4,7 +4,7 @@ class NodeApiBuilder {
         this.opts = opts;
     }
 
-    build(projectSrc) {
+    async build(projectSrc) {
         if (projectSrc.apiType != 'node') {
             return false;
         }

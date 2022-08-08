@@ -4,9 +4,9 @@ class ApiManager {
         this.opts = opts;
     }
 
-    build(projectSrc) {
+    async build(projectSrc) {
         if (projectSrc.apiType == 'node') {
-            return require('./node.api.builder')(this.opts).build(projectSrc);
+            return await require('./node.api.builder')(this.opts).build(projectSrc);
         }
         console.log('Api not work to ' + projectSrc.apiType);
     }

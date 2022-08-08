@@ -2,10 +2,11 @@ var express = require('express');
 var router = express.Router();
 
 var opts = {
-  workspace:"E:/workspace/wdiide"
+  // workspace:"E:/workspace/wdiide"
+  workspace:"C:/ambinete/workspaces/wdiide"
 }
 
-let buildProjectFnc = function (req, res) {
+let buildProjectFnc = async function (req, res) {
   let projectSrc = req.body;
 
   try {
@@ -14,7 +15,7 @@ let buildProjectFnc = function (req, res) {
     }
 
     let projectBuilder = require('../builder/project.builder')(opts);
-    projectBuilder.build(projectSrc);
+    await projectBuilder.build(projectSrc);
 
     console.log('Project build with success');
     res.send('Project build with success');
