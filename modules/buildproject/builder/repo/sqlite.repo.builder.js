@@ -13,22 +13,22 @@ class SQLitRepoBuilder {
             console.log('Repositorio não é do tipo sqlite');
             return false;
         }
-        if (!projectSrc.models || !projectSrc.models.length) {
+        if (!projectSrc.repo.models || !projectSrc.repo.models.length) {
             console.log('Não tem nenhum modelo no projeto');
             return false;
         }
 
-        if (projectSrc.repoSrc.file.includes('${workspace}')) {
-            projectSrc.repoSrc.file = projectSrc.repoSrc.file.replaceAll('${workspace}', this.opts.workspace);
+        if (projectSrc.repo.src.file.includes('${workspace}')) {
+            projectSrc.repo.src.file = projectSrc.repo.src.file.replaceAll('${workspace}', this.opts.workspace);
         }
-        await system.mkdir(system.dirname(projectSrc.repoSrc.file));
+        await system.mkdir(system.dirname(projectSrc.repo.src.file));
 
-        let wdiKnexRepo = wdiKnexDb({ file: projectSrc.repoSrc.file });
+        let wdiKnexRepo = wdiKnexDb({ file: projectSrc.repo.src.file });
 
         async function compileSchema() {
             let allScriptCompiled = [];
-            for (let index = 0; index < projectSrc.models.length; index++) {
-                const model = projectSrc.models[index];
+            for (let index = 0; index < projectSrc.repo.models.length; index++) {
+                const model = projectSrc.repo.models[index];
                 let result = await wdiKnexRepo.hasModel(model.name);
                 if (!result) {
                     console.log('model não existe ' + model.name);
@@ -82,8 +82,8 @@ class SQLitRepoBuilder {
             for (let index = 0; modelNames && index < modelNames.length; index++) {
                 const modelName = modelNames[index];
                 // let result = await wdiKnexRepo.hasModel(model.name);
-                // projectSrc.models[index];
-                let result = projectSrc.models.find(model => model.name == modelName);
+                // projectSrc.repo.models[index];
+                let result = projectSrc.repo.models.find(model => model.name == modelName);
                 if (!result) {
                     console.log('model foi deletado no negocio ' + modelName);
                     let modelDeleted = await wdiKnexRepo.deleteModel(modelName, { returnQuery: true });
@@ -96,9 +96,9 @@ class SQLitRepoBuilder {
 
         async function insertDefault() {
             let allScriptInsertDefault = [];
-            if (projectSrc.modelsInsertInit) {
-                for (let index = 0; index < projectSrc.modelsInsertInit.length; index++) {
-                    const modelInsertInit = projectSrc.modelsInsertInit[index];
+            if (projectSrc.repo.insertInit) {
+                for (let index = 0; index < projectSrc.repo.insertInit.length; index++) {
+                    const modelInsertInit = projectSrc.repo.insertInit[index];
                     let result = await wdiKnexRepo.insertOrUpdate({ modelName: modelInsertInit.name, content: modelInsertInit.values, ids: modelInsertInit.ids, returnQuery: true });
                     allScriptInsertDefault.push({ sql: result.sql, bindings: result.bindings });
                 }
@@ -112,8 +112,8 @@ class SQLitRepoBuilder {
         // #########################################################
         // Testando a aplicação
         async function teste() {
-            for (let index = 0; index < projectSrc.models.length; index++) {
-                let model = projectSrc.models[index];
+            for (let index = 0; index < projectSrc.repo.models.length; index++) {
+                let model = projectSrc.repo.models[index];
                 var modelMeta = await wdiKnexRepo.modelMeta(model.name)
                 console.log(JSON.stringify(modelMeta));
             }
