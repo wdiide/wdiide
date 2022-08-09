@@ -4,7 +4,7 @@ class BootstrapFrontBuilder {
         this.opts = opts;
     }
 
-    build(projectSrc) {
+    async build(projectSrc) {
         if (projectSrc.frontType != 'bootstrap') {
             return false;
         }

@@ -4,7 +4,7 @@ class FrontManager {
         this.opts = opts;
     }
 
-    build(projectSrc) {
+    async build(projectSrc) {
         if (projectSrc.frontType == 'bootstrap') {
             return require('./bootstrap.front.builder')(this.opts).build(projectSrc);
         }

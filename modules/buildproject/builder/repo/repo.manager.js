@@ -4,11 +4,11 @@ class RepoManager {
         this.opts = opts;
     }
 
-    build(projectSrc) {
+    async build(projectSrc) {
         projectSrc.models = this.orderModels(projectSrc.models);
 
         if (projectSrc.repoType == 'sqlite') {
-            return require('./sqlite.repo.builder')(this.opts).build(projectSrc);
+            return await require('./sqlite.repo.builder')(this.opts).build(projectSrc);
         }
         console.log('Repo not work to ' + projectSrc.repoType);
     }

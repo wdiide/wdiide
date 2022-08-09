@@ -1,3 +1,5 @@
+const system = require('./util/system');
+
 class ProjectBuilder {
 
     constructor(opts = {}) {
@@ -7,10 +9,17 @@ class ProjectBuilder {
         this.frontManager = require('./front/front.manager')(this.opts);
     }
 
-    build(projectSrc) {
-        this.repoManager.build(projectSrc);
-        this.appManager.build(projectSrc);
-        this.frontManager.build(projectSrc);
+    async build(projectSrc) {
+        await this.createProjectInit(projectSrc);
+        await this.repoManager.build(projectSrc);
+        await this.appManager.build(projectSrc);
+        await this.frontManager.build(projectSrc);
+    }
+
+    async createProjectInit(projectSrc){
+        await system.rmdir(this.opts.workspace+'/'+projectSrc.name, {recursive:true});
+        console.log('projeto removido');
+        await system.mkdir(this.opts.workspace+'/'+projectSrc.name);
     }
 }
 

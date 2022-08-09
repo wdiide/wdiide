@@ -1,6 +1,6 @@
 const path = require('path');
-const { mkdir, access } = require('fs/promises');
 const wdiKnexDb = require('./wdi.knex.db');
+const system = require('../util/system');
 
 class SQLitRepoBuilder {
 
@@ -8,7 +8,7 @@ class SQLitRepoBuilder {
         this.opts = opts;
     }
 
-    build(projectSrc) {
+    async build(projectSrc) {
         if (projectSrc.repoType != 'sqlite') {
             console.log('Repositorio não é do tipo sqlite');
             return false;
@@ -21,7 +21,7 @@ class SQLitRepoBuilder {
         if (projectSrc.repoSrc.file.includes('${workspace}')) {
             projectSrc.repoSrc.file = projectSrc.repoSrc.file.replaceAll('${workspace}', this.opts.workspace);
         }
-        this.mkdir(path.dirname(projectSrc.repoSrc.file));
+        await system.mkdir(system.dirname(projectSrc.repoSrc.file));
 
         let wdiKnexRepo = wdiKnexDb({ file: projectSrc.repoSrc.file });
 
@@ -78,11 +78,6 @@ class SQLitRepoBuilder {
 
 
 
-
-
-
-
-
             let modelNames = await wdiKnexRepo.modelNames();
             for (let index = 0; modelNames && index < modelNames.length; index++) {
                 const modelName = modelNames[index];
@@ -110,52 +105,38 @@ class SQLitRepoBuilder {
             }
         }
 
-        let compilado = compileSchema();
+        let result = await compileSchema();
 
-        compilado.then(async result => {
-            let insertDefaultResult = insertDefault();
-            console.log('Resultado de compilar ' + result);
-            // #########################################################
-            // Testando a aplicação
-            async function teste() {
-                for (let index = 0; index < projectSrc.models.length; index++) {
-                    let model = projectSrc.models[index];
-                    var modelMeta = await wdiKnexRepo.modelMeta(model.name)
-                    console.log(JSON.stringify(modelMeta));
-                }
-
-                console.log('------------------------------------------');
-                console.log('Consultando dados');
-                let grps = await wdiKnexRepo.select('produto_grp');
-                console.log('produto_grp: ' + JSON.stringify(grps));
-                let produtos = await wdiKnexRepo.select('produto');
-                console.log('produto: ' + JSON.stringify(produtos));
-
-                return 'ok';
+        let insertDefaultResult = await insertDefault();
+        console.log('Resultado de compilar ' + result);
+        // #########################################################
+        // Testando a aplicação
+        async function teste() {
+            for (let index = 0; index < projectSrc.models.length; index++) {
+                let model = projectSrc.models[index];
+                var modelMeta = await wdiKnexRepo.modelMeta(model.name)
+                console.log(JSON.stringify(modelMeta));
             }
-            let resultTest = await teste();
-            console.log('Finalizou o teste ' + resultTest);
 
-        }).finally(() => {
-            console.log('FINALIZOU');
-            setTimeout(() => {
-                wdiKnexRepo.close();
-            }, 3000);
-        })
+            console.log('------------------------------------------');
+            console.log('Consultando dados');
+            let grps = await wdiKnexRepo.select('produto_grp');
+            console.log('produto_grp: ' + JSON.stringify(grps));
+            let produtos = await wdiKnexRepo.select('produto');
+            console.log('produto: ' + JSON.stringify(produtos));
+
+            return 'ok';
+        }
+        let resultTest = await teste();
+        console.log('Finalizou o teste ' + resultTest);
+
+        console.log('FINALIZOU');
+        // Fechando conexão
+        wdiKnexRepo.close();
 
         console.log('Repo criado');
 
         console.log('SQLite repositorio não implementado ainda!');
-    }
-
-    async mkdir(pathDirectory) {
-        try {
-            await access(pathDirectory);
-        } catch (error) {
-            if (error.message.includes('no such file or directory')) {
-                await mkdir(pathDirectory, { recursive: true });
-            }
-        }
     }
 }
 
