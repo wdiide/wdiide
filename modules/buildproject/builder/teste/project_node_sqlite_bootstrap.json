@@ -1,6 +1,6 @@
 {
   "name": "wdiEstoque",
-  "apiType": "node",
+  "appType": "node",
   "repoType": "sqlite",
   "frontType": "bootstrap",
   "repo": {
@@ -105,6 +105,14 @@
           { "id": 4, "id_prod_grp": 2, "descricao": "Camiseta Adidas G rosa" },
           { "id": 5, "id_prod_grp": 2, "descricao": "Camiseta Adidas p azul" }
         ]
+      }
+    ]
+  },
+  "app": {
+    "models": [
+      {
+        "name": "produto",
+        "ref":":project:repo:produto"
       }
     ]
   },

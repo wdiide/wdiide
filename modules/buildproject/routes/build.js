@@ -3,7 +3,7 @@ var router = express.Router();
 
 var opts = {
   // workspace:"E:/workspace/wdiide"
-  workspace:"C:/ambinete/workspaces/wdiide"
+  workspace: "C:/ambinete/workspaces/wdiide"
 }
 
 let buildProjectFnc = async function (req, res) {
@@ -13,6 +13,12 @@ let buildProjectFnc = async function (req, res) {
     if (!projectSrc.name) {
       projectSrc = require('../builder/teste/project_node_sqlite_bootstrap.json');
     }
+
+    opts.path = {
+      projectApp: opts.workspace + '/' + projectSrc.name,
+      projectFront: opts.workspace + '/' + projectSrc.name + '-front'
+    }
+    opts.project = projectSrc;
 
     let projectBuilder = require('../builder/project.builder')(opts);
     await projectBuilder.build(projectSrc);

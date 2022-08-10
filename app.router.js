@@ -1,3 +1,4 @@
+var createError = require('http-errors');
 var express = require('express');
 var index = require('./routes/index');
 var users = require('./routes/users');
@@ -9,9 +10,7 @@ appRouter.use('/users', users);
 
 // catch 404 and forward to error handler
 appRouter.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+  next(createError(404));
 });
 
 // error handler

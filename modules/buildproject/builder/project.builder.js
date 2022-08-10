@@ -11,7 +11,7 @@ class ProjectBuilder {
 
     async build(projectSrc) {
         await this.createProjectInit(projectSrc);
-        await this.repoManager.build(projectSrc);
+        // await this.repoManager.build(projectSrc);
         await this.appManager.build(projectSrc);
         await this.frontManager.build(projectSrc);
     }
