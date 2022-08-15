@@ -1,6 +1,6 @@
 const system = require("../../util/system");
 
-class AppNode {
+class AppCreate {
     async create(opts){
         let appStr = `var createError = require('http-errors');
 var express = require('express');
@@ -23,8 +23,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api', require('./app.router'));
 
 module.exports = app;`;
-        system.writeFile(opts.path.projectApp+'/app.js', appStr);
+        await system.writeFile(opts.path.projectApp+'/app.js', appStr);
     }
 }
 
-module.exports = new AppNode();
+module.exports = new AppCreate();

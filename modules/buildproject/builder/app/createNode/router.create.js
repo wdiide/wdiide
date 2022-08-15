@@ -1,6 +1,6 @@
 const system = require("../../util/system");
 
-class RouterNode {
+class RouterCreate {
     async create(opts){
         let routerStr = `var createError = require('http-errors');
 var express = require('express');
@@ -8,7 +8,9 @@ var express = require('express');
 var appRouter = express.Router();
 
 appRouter.use('/', require('./routes/index'));
-appRouter.use('/users', require('./routes/users'));
+${opts.project.app.models.map(model => {
+    return `appRouter.use('/${model.name}', require('./routes/${model.name}'));`
+}).join('\n')}
 
 // catch 404 and forward to error handler
 appRouter.use(function(req, res, next) {
@@ -27,8 +29,8 @@ appRouter.use(function(err, req, res, next) {
 });
 
 module.exports = appRouter;`;
-        system.writeFile(opts.path.projectApp+'/app.router.js', routerStr);
+        await system.writeFile(opts.path.projectApp+'/app.router.js', routerStr);
     }
 }
 
-module.exports = new RouterNode();
+module.exports = new RouterCreate();

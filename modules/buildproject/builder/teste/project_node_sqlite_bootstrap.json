@@ -113,6 +113,10 @@
       {
         "name": "produto",
         "ref":":project:repo:produto"
+      },
+      {
+        "name": "produto_grp",
+        "ref":":project:repo:produto_grp"
       }
     ]
   },

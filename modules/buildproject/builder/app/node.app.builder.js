@@ -1,6 +1,5 @@
 const system = require("../util/system");
-const appNode = require("./createNode/app.node");
-const routerNode = require("./createNode/router.node");
+const { routerCreate, appCreate, indexCreate, modelsCreate } = require("./createNode");
 
 class NodeAppBuilderInternal {
     constructor(opts = {}) {
@@ -27,13 +26,15 @@ class NodeAppBuilderInternal {
         shScript += `npm install`;
         await system.exec(shScript);
 
-        routerNode.create(this.opts);
-        appNode.create(this.opts);
+        routerCreate.create(this.opts);
+        appCreate.create(this.opts);
+        indexCreate.create(this.opts);
+        modelsCreate.create(this.opts);
     }
 
     async createAngularProject(projectSrc){
         let _self = this;
-        // Craindo projeto em Angular
+        // Criando projeto em Angular
         let shScript = `cd ${_self.opts.workspace} && `
         shScript += `npx -p @angular/cli@14.1.1 ng new ${projectSrc.name}Angular --style=scss`
         await system.exec(shScript);
